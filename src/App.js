@@ -1,28 +1,21 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+import Nav from 'layout/Nav';
+import Routes from 'layout/Routes';
+
+export const Context = React.createContext({
+  token: null
+});
+
+export default () => {
+  const [token, setToken] = useState(null);
+
+  return (
+    <Context.Provider value={{ token, setToken }}>
+      <div className="app">
+        <Nav />
+        <Routes />
       </div>
-    );
-  }
-}
-
-export default App;
+    </Context.Provider>
+  );
+};

@@ -1,0 +1,49 @@
+.app {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 100vw;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+  padding: 16pt;
+  &.grid {
+    display: grid;
+    grid-auto-rows: 180px;
+    grid-template-columns: repeat(auto-fit, 320px);
+    justify-content: center;
+    grid-gap: 8pt;
+  }
+}
+
+.stream {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.thumbnail {
+  position: relative;
+  background: grey;
+  .overlay {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-end;
+    width: 100%;
+    height: 100%;
+    padding: 0.5em;
+    line-height: 1.1;
+    background: rgba(0, 0, 0, 0.4);
+    transition: all .3s ease;
+  }
+  &:hover {
+    .overlay {
+      opacity: 1;
+    }
+  }
+}

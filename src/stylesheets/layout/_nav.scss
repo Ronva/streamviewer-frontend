@@ -1,0 +1,18 @@
+nav {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8pt 16pt;
+  .logo {
+    margin-right: auto;
+    font-weight: bold;
+  }
+  button {
+    margin-left: 8pt;
+    padding: 0;
+    text-transform: uppercase;
+    background: transparent;
+    box-shadow: none;
+    color: $text-color;
+    font-size: $h6;
+  }
+}
