@@ -1,52 +1,35 @@
-import React, { useContext } from 'react';
-import { Context } from 'App';
+import React from 'react';
 
-import axios from 'axios';
+import Authorized from 'components/Authroized';
+import LoginBtn from 'components/LoginBtn';
+import LogoutBtn from 'components/LogoutBtn';
 import { Link } from '@reach/router';
-import { GoogleLogin, GoogleLogout } from 'react-google-login';
+
+import { ReactComponent as Logo } from 'assets/logo.svg';
 
 export default () => {
-  const { token, setToken } = useContext(Context);
-
-  const onSuccess = async ({ accessToken }) => {
-    const { data } = await axios.get(
-      `https://www.googleapis.com/oauth2/v1/tokeninfo`,
-      {
-        params: {
-          access_token: accessToken
-        }
-      }
-    );
-    const { audience, user_id, scope, expires_in } = data;
-
-    if (audience && user_id && scope && expires_in) {
-      setToken(accessToken);
-    }
-  };
-
-  const onFailure = res => console.log(res);
-
-  const handleLogout = () => setToken(null);
-
   return (
     <nav>
       <Link to="/" className="logo">
-        StreamViewer
+        <Logo />
       </Link>
-      {token ? (
-        <GoogleLogout
-          render={({ onClick }) => <button onClick={onClick}>Logout</button>}
-          onLogoutSuccess={handleLogout}
-        />
-      ) : (
-        <GoogleLogin
-          scope="https://www.googleapis.com/auth/youtube"
-          clientId={process.env.REACT_APP_YOUTUBE_ID}
-          render={({ onClick }) => <button onClick={onClick}>Login</button>}
-          onSuccess={onSuccess}
-          onFailure={onFailure}
-        />
-      )}
+      <Authorized fallback={<LoginBtn />}>
+        <LogoutBtn />
+      </Authorized>
+      {/*{token ? (*/}
+      {/*<GoogleLogout*/}
+      {/*render={({ onClick }) => <button onClick={onClick}>Logout</button>}*/}
+      {/*onLogoutSuccess={handleLogout}*/}
+      {/*/>*/}
+      {/*) : (*/}
+      {/*<GoogleLogin*/}
+      {/*scope="https://www.googleapis.com/auth/youtube"*/}
+      {/*clientId={process.env.REACT_APP_YOUTUBE_ID}*/}
+      {/*render={({ onClick }) => <button onClick={onClick}>Login</button>}*/}
+      {/*onSuccess={onLoginSuccess}*/}
+      {/*onFailure={onLoginFailure}*/}
+      {/*/>*/}
+      {/*)}*/}
     </nav>
   );
 };

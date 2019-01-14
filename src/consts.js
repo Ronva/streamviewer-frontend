@@ -1,22 +1,29 @@
-export const fetchParams = {
-  part: 'snippet',
-  q: 'gaming',
-  eventType: 'live',
-  type: 'video',
-  maxResults: '5',
-  order: 'viewCount',
-  videoEmbeddable: true,
-  key: process.env.REACT_APP_YOUTUBE_KEY
+import nataliethumbnail from 'assets/natalie-thumbnail.png';
+
+export const initialChatState = {
+  items: [],
+  newItems: []
 };
 
 export const formatChatMessages = items =>
-  items.reduce((acc, { authorDetails, snippet }) => {
+  items.reduce((acc, { id, authorDetails, snippet }) => {
     const { displayName } = authorDetails;
     const { messageText } = snippet.textMessageDetails;
-    return acc.concat({ displayName, messageText });
+    return acc.concat({ id, displayName, messageText });
   }, []);
 
 export const mockVideos = [
+  {
+    id: { videoId: 'natalie' },
+    snippet: {
+      title: "Natalie's Stream",
+      thumbnails: {
+        medium: {
+          url: nataliethumbnail
+        }
+      }
+    }
+  },
   {
     kind: 'youtube#searchResult',
     etag: '"XI7nbFXulYBIpL0ayR_gDh3eu1k/Opah0Kz6lPMuNoc0d_Hg8nbBGug"',

@@ -5,18 +5,29 @@
 }
 
 .chat {
-  display: flex;
-  flex-flow: column nowrap;
-  min-width: 200pt;
-  max-width: $video-width;
-  max-height: $video-height;
+  display: grid;
+  grid-template:
+      'main tabs ' auto
+      'main tabs ' auto
+      'main tabs ' 1fr
+      'input tabs' auto /
+       1fr auto;
+  width: $video-width;
+  max-width: 100%;
+  height: $video-height;
   margin: 8pt;
-  .messages {
-    flex: 1;
+  section {
+    grid-area: main;
+    padding: 8pt;
     background: color(brand, light);
     overflow-y: auto;
+    label {
+      font-weight: bold;
+      color: color(grey, lightest);
+    }
   }
   .chatInput {
+    grid-area: input;
     display: flex;
     input {
       flex: 1;
@@ -27,7 +38,31 @@
       color: $text-color;
     }
   }
+  .tabs {
+    grid-area: tabs;
+    display: flex;
+    flex-flow: column nowrap;
+  }
+  .tab {
+    background: transparent;
+    padding: 8pt;
+    border-radius: 0 3px 3px 0;
+    svg {
+      display: block;
+      width: 16pt;
+      height: auto;
+      color: color(grey, lightest);
+      transition: color .3s ease;
+    }
+    &.active {
+      background: color(brand, light);
+      svg {
+        color: $text-color;
+      }
+    }
+  }
   .streamOffline {
+    grid-area: input;
     padding: 4pt;
     text-align: center;
     background: color(brand, lightest);
@@ -38,11 +73,6 @@
 }
 
 .message {
-  padding: 4pt 16pt;
+  padding: 4pt 8pt;
   font-size: $h6;
-  .author {
-    font-weight: bold;
-    margin-right: 4pt;
-    color: color(grey, lightest);
-  }
 }

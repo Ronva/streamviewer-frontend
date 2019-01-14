@@ -1,0 +1,9 @@
+.notice {
+  position: fixed;
+  bottom: 8pt;
+  right: 16pt;
+  padding: 8pt 16pt;
+  font-size: $h4;
+  font-weight: bold;
+  background: color(brand, lightest);
+}

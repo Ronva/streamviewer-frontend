@@ -5,6 +5,11 @@ nav {
   .logo {
     margin-right: auto;
     font-weight: bold;
+    svg {
+      width: auto;
+      height: 1em;
+      fill: $text-color;
+    }
   }
   button {
     margin-left: 8pt;

@@ -2,14 +2,19 @@ import React from 'react';
 import { Router } from '@reach/router';
 
 import Home from 'pages/Home';
+import Login from 'pages/Login';
 import Stream from 'pages/Stream';
+import Natalie from 'pages/Natalie';
 
-const Login = () => <>Login</>;
+const StreamWrapper = ({ children }) => children;
 
 export default () => (
   <Router>
     <Home path="/" />
-    <Stream path="stream/:streamId" />
     <Login path="login" />
+    <StreamWrapper path="stream">
+      <Stream path=":streamId" />
+      <Natalie path="natalie" />
+    </StreamWrapper>
   </Router>
 );

@@ -36,3 +36,10 @@ b, strong {
 a {
   color: $text-color;
 }
+
+svg {
+  cursor: pointer;
+  path {
+    fill: currentColor;
+  }
+}
