@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
+import { Context } from 'App';
 
-import { fetchFromApi } from 'utils';
+import { fetchFromApi, postToApi } from 'utils';
 import { formatChatMessages } from 'consts';
 
 const initialChat = {
@@ -17,10 +18,9 @@ const Message = ({ content, scrollInterval }) => {
       if (scrollInterval) {
         setTimeout(
           ref.current.scrollIntoView({
-            behavior: 'smooth',
-            block: 'end'
+            behavior: 'smooth'
           }),
-          scrollInterval
+          Math.min(scrollInterval, 250)
         );
       }
     },
@@ -35,7 +35,30 @@ const Message = ({ content, scrollInterval }) => {
   );
 };
 
+const ChatInput = ({ sendMessage }) => {
+  const [input, setInput] = useState('');
+
+  const handleSendMessage = () => {
+    const res = sendMessage(input);
+    if (!res.error) {
+      setInput('');
+    }
+  };
+
+  return (
+    <div className="chatInput">
+      <input
+        type="text"
+        value={input}
+        onChange={e => setInput(e.target.value)}
+      />
+      <button onClick={handleSendMessage}>Send</button>
+    </div>
+  );
+};
+
 export default ({ streamId }) => {
+  const { token } = useContext(Context);
   const [loading, setLoading] = useState('Loading.');
   const [error, setError] = useState(null);
   const [streamOffline, setStreamOffline] = useState(false);
@@ -102,6 +125,32 @@ export default ({ streamId }) => {
     setLoading(false);
   };
 
+  const sendMessage = async input => {
+    try {
+      const { activeLiveChatId } = videoInfo.liveStreamingDetails;
+      const snippet = {
+        liveChatId: activeLiveChatId,
+        type: 'textMessageEvent',
+        textMessageDetails: {
+          messageText: input
+        }
+      };
+      const res = await postToApi(
+        'liveChat/messages?part=snippet',
+        {
+          snippet
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      console.log(res);
+    } catch (e) {
+      console.log(e);
+      return e;
+    }
+  };
+
   useEffect(() => {
     fetchVideoInfo();
   }, []);
@@ -115,22 +164,19 @@ export default ({ streamId }) => {
     [videoInfo]
   );
 
-  const messages =
-    chat.items.length > 0
-      ? formatChatMessages(chat.items).map(message => (
-          <Message content={message} />
-        ))
-      : null;
-  const newMessages =
-    chat.newItems.length > 0
-      ? formatChatMessages(chat.newItems).map((message, i) => (
-          <Message content={message} scrollInterval={chat.scrollInterval * i} />
-        ))
-      : null;
+  const messages = formatChatMessages(chat.items).map(message => (
+    <Message content={message} />
+  ));
+  const newMessages = formatChatMessages(chat.newItems).map((message, i) => (
+    <Message content={message} scrollInterval={chat.scrollInterval * i} />
+  ));
+  const offline = <div className="streamOffline">Stream has ended.</div>;
 
   return (
     <>
-      <button onClick={() => setStreamOffline(!streamOffline)}>
+      <button
+        style={{ display: 'flex', margin: '0 auto' }}
+        onClick={() => setStreamOffline(!streamOffline)}>
         fetch toggle
       </button>
       <main className="stream">
@@ -148,9 +194,9 @@ export default ({ streamId }) => {
                 {messages}
                 {newMessages}
               </div>
-              {streamOffline && (
-                <div className="streamOffline">Stream has ended.</div>
-              )}
+              {streamOffline
+                ? offline
+                : token && <ChatInput sendMessage={sendMessage} />}
             </div>
           </>
         )}

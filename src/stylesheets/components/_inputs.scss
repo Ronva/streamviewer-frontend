@@ -1,11 +1,6 @@
 input[type=text] {
+  padding: 8pt 4pt;
   outline-width: 2px;
   transition: outline .1s ease-in;
-  &:valid {
-    outline-color: lighten(#00c300, 2);
-  }
-  &:invalid {
-    outline-color: lighten(red, 2);
-  }
 }
 

@@ -16,6 +16,17 @@
     background: color(brand, light);
     overflow-y: auto;
   }
+  .chatInput {
+    display: flex;
+    input {
+      flex: 1;
+    }
+    button {
+      border-radius: 0;
+      background: color(brand, lightest);
+      color: $text-color;
+    }
+  }
   .streamOffline {
     padding: 4pt;
     text-align: center;

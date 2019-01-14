@@ -31,6 +31,7 @@ export default () => {
 
   return (
     <main className="grid">
+      <Link to="stream/natalie" />
       {videos.map(({ videoId, channelId, thumbnails, title }) => (
         <Link key={videoId} to={`stream/${videoId}`} className="thumbnail">
           <img src={thumbnails.medium.url} alt="" />

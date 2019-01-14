@@ -1,10 +1,10 @@
 /* _-_-_- modules/BUTTONS -_-_-_ */
 button {
   padding: 8pt 16pt;
-  background: $bg;
-  color: $text-color;
+  background: $text-color;
+  color: $bg;
   outline: none;
-  box-shadow: 0 0 0 2px $text-color;
+  //box-shadow: 0 0 0 2px $text-color;
   border: none;
   border-radius: 3px;
   cursor: pointer;

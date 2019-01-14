@@ -40,6 +40,7 @@ export default () => {
         />
       ) : (
         <GoogleLogin
+          scope="https://www.googleapis.com/auth/youtube"
           clientId={process.env.REACT_APP_YOUTUBE_ID}
           render={({ onClick }) => <button onClick={onClick}>Login</button>}
           onSuccess={onSuccess}
