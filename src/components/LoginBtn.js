@@ -6,11 +6,11 @@ import { GoogleLogin } from 'react-google-login';
 import { onLoginFailure, onLoginSuccess } from 'utils';
 
 export default () => {
-  const { setToken } = useContext(Context);
+  const { updateGlobalState } = useContext(Context);
 
-  const success = token => {
-    const accessToken = onLoginSuccess(token);
-    setToken(accessToken);
+  const success = async token => {
+    const accessToken = await onLoginSuccess(token);
+    updateGlobalState({ property: 'googleToken', value: accessToken });
   };
 
   return (

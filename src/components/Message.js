@@ -14,7 +14,7 @@ export default ({ content, scrollInterval }) => {
   );
 
   return (
-    <div ref={ref} className="message">
+    <div ref={ref} className="message item">
       <label className="author">{displayName} </label>
       {messageText}
     </div>

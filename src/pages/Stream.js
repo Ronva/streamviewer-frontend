@@ -1,49 +1,47 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Context } from 'App';
 
 import Chat from 'components/Chat';
 
-import { postToApi, formatStats, useStream } from 'utils';
+import { postToApi, useStream } from 'utils';
 
 export default ({ streamId }) => {
-  const { token } = useContext(Context);
-  const { loading, error, isOffline, videoInfo, chat } = useStream(streamId);
-  const [stats, setStats] = useState({});
+  const { googleToken, updateGlobalState } = useContext(Context);
+  const stream = useStream(streamId);
+  const { loading, error, videoInfo } = stream;
 
   useEffect(
     () => {
-      if (!error && videoInfo) setStats(formatStats(videoInfo));
+      updateGlobalState({ property: 'stream', value: stream });
+      return () => {
+        updateGlobalState({ property: 'stream', value: null });
+      };
     },
-    [videoInfo]
+    [stream]
   );
 
   const sendMessage = async input => {
     try {
       const { activeLiveChatId } = videoInfo.liveStreamingDetails;
-      const snippet = {
-        liveChatId: activeLiveChatId,
-        type: 'textMessageEvent',
-        textMessageDetails: {
-          messageText: input
+      const data = {
+        snippet: {
+          liveChatId: activeLiveChatId,
+          type: 'textMessageEvent',
+          textMessageDetails: {
+            messageText: input
+          }
         }
       };
-      const res = await postToApi(
-        'liveChat/messages?part=snippet',
-        {
-          snippet
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-      console.log(res);
+      const config = {
+        headers: { Authorization: `Bearer ${googleToken}` }
+      };
+
+      await postToApi('liveChat/messages?part=snippet', data, config);
     } catch (e) {
       console.log(e);
       return e;
     }
   };
-
-  const chatProps = { chat, isOffline, stats, sendMessage };
 
   return (
     <main role="main" className="stream">
@@ -56,7 +54,7 @@ export default ({ streamId }) => {
             frameBorder="0"
             allowFullScreen
           />
-          <Chat {...chatProps} />
+          <Chat sendMessage={sendMessage} />
         </>
       )}
     </main>

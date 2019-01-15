@@ -3,9 +3,10 @@ import { GoogleLogout } from 'react-google-login';
 import { Context } from 'App';
 
 export default () => {
-  const { setToken } = useContext(Context);
+  const { updateGlobalState } = useContext(Context);
 
-  const handleLogout = () => setToken(null);
+  const handleLogout = () =>
+    updateGlobalState({ property: 'googleToken', value: null });
 
   return (
     <GoogleLogout

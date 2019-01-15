@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useReducer } from 'react';
 import { Context } from 'App';
 import axios from 'axios';
 
 import { format } from 'date-fns';
-import { initialChatState } from 'consts';
+import { GenericReducer, initialStreamState } from 'consts';
 
 export const fetchFromApi = async (endpoint, params = {}) =>
   await axios.get(`https://www.googleapis.com/youtube/v3/${endpoint}`, {
@@ -57,7 +57,7 @@ export const formatStats = stats => {
 };
 
 export const useFetchVideos = (query, maxResults, initial = []) => {
-  const { token } = useContext(Context);
+  const { googleToken } = useContext(Context);
   const [videos, setVideos] = useState(initial);
 
   const fetchVideos = async () => {
@@ -78,20 +78,17 @@ export const useFetchVideos = (query, maxResults, initial = []) => {
 
   useEffect(
     () => {
-      token ? fetchVideos() : setVideos(initial);
+      googleToken ? fetchVideos() : setVideos(initial);
     },
-    [token, query]
+    [googleToken, query]
   );
 
   return videos;
 };
 
 export const useStream = (id, withChat = true) => {
-  const [loading, setLoading] = useState('Loading.');
-  const [error, setError] = useState(null);
-  const [isOffline, setOffline] = useState(false);
-  const [videoInfo, setInfo] = useState(null);
-  const [chat, setChat] = useState(initialChatState);
+  const [state, dispatch] = useReducer(GenericReducer, initialStreamState);
+  const { error, videoInfo, isOffline, chat } = state;
 
   const fetchChatReady = !error && videoInfo && !isOffline && withChat;
   let chatTimeout = null;
@@ -102,8 +99,16 @@ export const useStream = (id, withChat = true) => {
       part: 'snippet,contentDetails,statistics,liveStreamingDetails',
       key: process.env.REACT_APP_YOUTUBE_KEY
     });
-    const [info] = data.items;
-    setInfo(info);
+    const { items, pageInfo } = data;
+    if (pageInfo.totalResults === 0) {
+      dispatch({
+        property: 'error',
+        value: <span className="notice">Video not found</span>
+      });
+    } else {
+      const [info] = items;
+      dispatch({ property: 'videoInfo', value: info });
+    }
   };
 
   const fetchChat = async (nextPageToken = null) => {
@@ -117,31 +122,29 @@ export const useStream = (id, withChat = true) => {
           ...(nextPageToken ? { nextPageToken } : {})
         });
         const { offlineAt, ...newChat } = data;
+
         if (offlineAt) {
-          clearTimeout(chatTimeout);
-          setOffline(true);
+          dispatch({ property: 'isOffline', value: true });
         } else {
-          const {
-            items: newItems,
-            nextPageToken: newToken,
-            pollingIntervalMillis
-          } = newChat;
-          await setChat({
-            scrollInterval: pollingIntervalMillis / newItems.length,
-            items: [...chat.items, ...chat.newItems],
-            newItems
+          const { pollingIntervalMillis } = newChat;
+          await dispatch({
+            property: 'chat',
+            value: {
+              scrollInterval: pollingIntervalMillis / newChat.items.length,
+              items: [...chat.items, ...newChat.items]
+            }
           });
           chatTimeout = setTimeout(
-            () => fetchChat(newToken),
+            () => fetchChat(newChat.nextPageToken),
             pollingIntervalMillis
           );
         }
       } else {
-        setOffline(true);
+        dispatch({ property: 'isOffline', value: true });
       }
     } catch (e) {
       console.log(e);
-      setError('Error fetching chat.');
+      dispatch({ property: 'error', value: 'Error fetching chat.' });
     }
   };
 
@@ -154,8 +157,14 @@ export const useStream = (id, withChat = true) => {
 
   useEffect(
     () => {
+      if (videoInfo) {
+        dispatch({
+          property: 'stats',
+          value: formatStats(videoInfo)
+        });
+      }
       if (fetchChatReady) fetchChat();
-      setLoading(false);
+      dispatch({ property: 'loading', value: false });
       return () => {
         clearTimeout(chatTimeout);
       };
@@ -163,5 +172,5 @@ export const useStream = (id, withChat = true) => {
     [videoInfo]
   );
 
-  return { loading, error, isOffline, setOffline, videoInfo, chat };
+  return state;
 };

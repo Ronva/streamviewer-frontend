@@ -1,16 +1,32 @@
 import nataliethumbnail from 'assets/natalie-thumbnail.png';
 
-export const initialChatState = {
-  items: [],
-  newItems: []
+export const initialStreamState = {
+  loading: 'Loading',
+  error: null,
+  isOffline: false,
+  videoInfo: null,
+  stats: {},
+  chat: {
+    items: []
+  }
+};
+
+export const GenericReducer = (state, { property, value }) => {
+  return {
+    ...state,
+    [property]: value
+  };
 };
 
 export const formatChatMessages = items =>
-  items.reduce((acc, { id, authorDetails, snippet }) => {
-    const { displayName } = authorDetails;
-    const { messageText } = snippet.textMessageDetails;
-    return acc.concat({ id, displayName, messageText });
-  }, []);
+  items
+    .filter(({ snippet }) => snippet && snippet.textMessageDetails)
+    .reduce((acc, { id, authorDetails, snippet }) => {
+      const { displayName } = authorDetails;
+      const { publishedAt, textMessageDetails } = snippet;
+      const { messageText } = textMessageDetails;
+      return acc.concat({ id, displayName, messageText, publishedAt });
+    }, []);
 
 export const mockVideos = [
   {

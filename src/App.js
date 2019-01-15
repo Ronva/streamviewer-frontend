@@ -1,24 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import { SocketProvider } from 'use-phoenix-channel';
 // import { navigate } from '@reach/router';
 
 import Nav from 'layout/Nav';
 import Routes from 'layout/Routes';
 
-export const Context = React.createContext({
-  token: null
-});
+import { GenericReducer } from 'consts';
+
+export const Context = React.createContext({});
 
 export default () => {
-  const [token, setToken] = useState(null);
+  const [globalState, updateGlobalState] = useReducer(GenericReducer, {
+    googleToken: null,
+    stream: null
+  });
+  const { googleToken } = globalState;
 
-  useEffect(() => {
-    // navigate('/login');
-  }, []);
+  useEffect(
+    () => {
+      // !googleToken && navigate('/login');
+    },
+    [googleToken]
+  );
 
   return (
-    <SocketProvider wsUrl="//localhost:4000/socket" options={{ token }}>
-      <Context.Provider value={{ token, setToken }}>
+    <SocketProvider wsUrl="//localhost:4000/socket">
+      <Context.Provider value={{ ...globalState, updateGlobalState }}>
         <div className="app">
           <Nav />
           <Routes />
