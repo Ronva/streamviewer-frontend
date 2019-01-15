@@ -10,7 +10,7 @@ export default () => {
 
   const success = async token => {
     const accessToken = await onLoginSuccess(token);
-    updateGlobalState({ property: 'googleToken', value: accessToken });
+    updateGlobalState({ property: 'token', value: accessToken });
   };
 
   return (

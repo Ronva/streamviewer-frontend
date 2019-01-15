@@ -6,19 +6,9 @@ import Chat from 'components/Chat';
 import { postToApi, useStream } from 'utils';
 
 export default ({ streamId }) => {
-  const { googleToken, updateGlobalState } = useContext(Context);
+  const { token, updateGlobalState } = useContext(Context);
   const stream = useStream(streamId);
   const { loading, error, videoInfo } = stream;
-
-  useEffect(
-    () => {
-      updateGlobalState({ property: 'stream', value: stream });
-      return () => {
-        updateGlobalState({ property: 'stream', value: null });
-      };
-    },
-    [stream]
-  );
 
   const sendMessage = async input => {
     try {
@@ -33,7 +23,7 @@ export default ({ streamId }) => {
         }
       };
       const config = {
-        headers: { Authorization: `Bearer ${googleToken}` }
+        headers: { Authorization: `Bearer ${token}` }
       };
 
       await postToApi('liveChat/messages?part=snippet', data, config);
@@ -43,9 +33,22 @@ export default ({ streamId }) => {
     }
   };
 
+  useEffect(
+    () => {
+      updateGlobalState({
+        property: 'stream',
+        value: { ...stream, sendMessage }
+      });
+      return () => {
+        updateGlobalState({ property: 'stream', value: null });
+      };
+    },
+    [stream]
+  );
+
   return (
     <main role="main" className="stream">
-      {error || loading || (
+      {error || (loading && 'Loading...') || (
         <>
           <iframe
             className="video"

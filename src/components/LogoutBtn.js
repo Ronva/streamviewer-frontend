@@ -6,7 +6,7 @@ export default () => {
   const { updateGlobalState } = useContext(Context);
 
   const handleLogout = () =>
-    updateGlobalState({ property: 'googleToken', value: null });
+    updateGlobalState({ property: 'token', value: null });
 
   return (
     <GoogleLogout

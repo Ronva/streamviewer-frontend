@@ -5,12 +5,12 @@ import { navigate } from '@reach/router';
 import LoginBtn from 'components/LoginBtn';
 
 export default () => {
-  const { googleToken } = useContext(Context);
+  const { token } = useContext(Context);
   useEffect(
     () => {
-      googleToken && navigate('/');
+      token && navigate('/');
     },
-    [googleToken]
+    [token]
   );
 
   return (

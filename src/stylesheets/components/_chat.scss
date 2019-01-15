@@ -8,6 +8,7 @@
   display: grid;
   grid-template:
       'title tabs ' auto
+      'top tabs ' auto
       'main tabs ' 1fr
       'input tabs' auto /
        1fr auto;
@@ -30,85 +31,90 @@
     grid-area: main;
     background: color(brand, light);
     overflow-y: auto;
-    .list {
-      padding: 8pt 0;
-    }
-    .item {
-      padding: 4pt 16pt;
-      &.message {
-        font-size: $h6;
-      }
-    }
+    padding: 8pt 0;
     label {
       font-weight: bold;
       color: color(grey, lightest);
       pointer-events: none;
     }
   }
-  .chatInput {
+  .chatInput, .streamOffline {
     grid-area: input;
-    display: flex;
-    input {
-      flex: 1;
-    }
-    button {
-      border-radius: 0;
-      background: color(brand, lightest);
-      color: $text-color;
-    }
+  }
+  .userSearch, .back {
+    grid-area: top;
   }
   .tabs {
     grid-area: tabs;
     display: flex;
     flex-flow: column nowrap;
   }
-  .tab {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 32pt;
-    height: 32pt;
-    padding: 0;
-    background: transparent;
-    border-radius: 0 3px 3px 0;
-    svg {
-      display: block;
-      width: 50%;
-      height: auto;
-      color: color(grey, lightest);
-      transition: color .3s ease;
-    }
-    &.active {
-      background: color(brand, light);
-      svg {
-        color: $text-color;
-      }
-    }
-  }
   .streamOffline {
     grid-area: input;
-    padding: 4pt;
-    text-align: center;
-    background: color(brand, lightest);
-    color: color(brand, dark);
-    font-weight: bold;
-    text-transform: uppercase;
   }
 }
 
-.users {
-  position: relative;
-  .item {
-    display: block;
-    padding: 0;
-    background: transparent;
+.item {
+  display: block;
+  margin: 8pt 16pt;
+  padding: 0;
+  line-height: 1;
+  text-align: left;
+  background: transparent;
+  &.message {
+    line-height: 1.4;
+    font-size: $h6;
   }
-  input, .back {
-    position: sticky;
-    top: 0;
-    width: 100%;
+}
+
+.chatInput {
+  display: flex;
+  input {
+    flex: 1;
+  }
+  button {
+    border-radius: 0;
     background: color(brand, lightest);
     color: $text-color;
-    border-radius: 0;
   }
+}
+
+.streamOffline {
+  padding: 4pt;
+  text-align: center;
+  background: color(brand, lightest);
+  color: color(brand, dark);
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.tab {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32pt;
+  height: 32pt;
+  padding: 0;
+  background: transparent;
+  border-radius: 0 3px 3px 0;
+  svg {
+    display: block;
+    width: 50%;
+    height: auto;
+    color: color(grey, lightest);
+    transition: color .3s ease;
+  }
+  &.active {
+    background: color(brand, light);
+    svg {
+      color: $text-color;
+    }
+  }
+}
+
+.userSearch, .back {
+  width: 100%;
+  background: color(brand, lightest);
+  color: $text-color;
+  border-radius: 0;
 }

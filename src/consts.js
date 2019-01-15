@@ -1,7 +1,7 @@
 import nataliethumbnail from 'assets/natalie-thumbnail.png';
 
 export const initialStreamState = {
-  loading: 'Loading',
+  loading: true,
   error: null,
   isOffline: false,
   videoInfo: null,

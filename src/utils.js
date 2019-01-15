@@ -49,7 +49,7 @@ export const formatStats = stats => {
 
   return {
     Viewers: concurrentViewers,
-    'Start time': format(actualStartTime, 'MMM Do, H:mm'),
+    'Start time': format(actualStartTime, 'MMM Do YYYY, h:mma'),
     Likes: likeCount,
     Dislikes: dislikeCount,
     'Total views': viewCount
@@ -57,7 +57,7 @@ export const formatStats = stats => {
 };
 
 export const useFetchVideos = (query, maxResults, initial = []) => {
-  const { googleToken } = useContext(Context);
+  const { token } = useContext(Context);
   const [videos, setVideos] = useState(initial);
 
   const fetchVideos = async () => {
@@ -78,9 +78,9 @@ export const useFetchVideos = (query, maxResults, initial = []) => {
 
   useEffect(
     () => {
-      googleToken ? fetchVideos() : setVideos(initial);
+      token ? fetchVideos() : setVideos(initial);
     },
-    [googleToken, query]
+    [token, query]
   );
 
   return videos;
@@ -165,6 +165,7 @@ export const useStream = (id, withChat = true) => {
       }
       if (fetchChatReady) fetchChat();
       dispatch({ property: 'loading', value: false });
+
       return () => {
         clearTimeout(chatTimeout);
       };

@@ -1,12 +1,18 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import { Context } from 'App';
 
-export default ({ sendMessage }) => {
+import Authorized from 'components/Authroized';
+
+export default () => {
+  const { stream } = useContext(Context);
+  const { sendMessage } = stream;
+
   const [input, setInput] = useState('');
   const inputRef = useRef(null);
 
-  const handleSendMessage = () => {
-    const res = sendMessage(input);
-    if (res && !res.error) {
+  const handleSendMessage = async () => {
+    if (input) {
+      await sendMessage(JSON.stringify(input));
       setInput('');
     }
   };
@@ -19,14 +25,17 @@ export default ({ sendMessage }) => {
   );
 
   return (
-    <div className="chatInput">
-      <input
-        ref={inputRef}
-        type="text"
-        value={input}
-        onChange={e => setInput(e.target.value)}
-      />
-      <button onClick={handleSendMessage}>Send</button>
-    </div>
+    <Authorized>
+      <div className="chatInput">
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Send a message"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+        />
+        <button onClick={handleSendMessage}>Send</button>
+      </div>
+    </Authorized>
   );
 };
