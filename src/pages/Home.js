@@ -1,13 +1,21 @@
-import React from 'react';
-import { Link } from '@reach/router';
+import React, { useEffect, useContext } from 'react';
+import { Context } from 'App';
 
-// import Authorized from 'components/Authroized';
+import { Link, navigate } from '@reach/router';
 
 import { mockVideos } from 'consts';
 import { normalizeVideos, useFetchVideos } from 'utils';
 
 export default () => {
+  const { token } = useContext(Context);
   const videos = useFetchVideos('gaming', 20, normalizeVideos(mockVideos));
+
+  useEffect(
+    () => {
+      !token && navigate('/login');
+    },
+    [token]
+  );
 
   return (
     <main role="main" className="grid">

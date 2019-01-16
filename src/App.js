@@ -1,5 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
-// import { navigate } from '@reach/router';
+import React, { useReducer } from 'react';
 
 import Nav from 'layout/Nav';
 import Routes from 'layout/Routes';
@@ -14,14 +13,6 @@ export default () => {
     videoList: [],
     stream: initialStreamState
   });
-  const { token } = globalState;
-
-  useEffect(
-    () => {
-      // !token && navigate('/login');
-    },
-    [token]
-  );
 
   return (
     <Context.Provider value={{ ...globalState, updateGlobalState }}>

@@ -1,14 +1,9 @@
-import { Socket } from 'phoenix';
 import React, { useContext, useEffect } from 'react';
 import { Context } from 'App';
 
 import Chat from 'components/Chat';
 
 import { useFetchVideos, useStream } from 'utils';
-
-const socket = new Socket('ws://localhost:4000/socket');
-socket.connect();
-const channel = socket.channel('room:natalie', {});
 
 export default () => {
   const { updateGlobalState } = useContext(Context);
@@ -18,20 +13,7 @@ export default () => {
   const stream = useStream(videoId, false);
   const { loading, error } = stream;
 
-  const sendMessage = message => {
-    channel
-      .push('shout', { body: message }, 10000)
-      .receive('ok', msg => console.log('created message', msg))
-      .receive('error', reasons => console.log('create failed', reasons))
-      .receive('timeout', () => console.log('Networking issue...'));
-  };
-
-  useEffect(() => {
-    channel.on('shout', payload => {
-      console.log(payload);
-    });
-    return () => {};
-  }, []);
+  const sendMessage = message => {};
 
   useEffect(() => {
     updateGlobalState({ property: 'stream', value: stream });

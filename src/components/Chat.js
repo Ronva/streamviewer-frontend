@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 
 import classNames from 'classnames';
-import Messages from 'components/tabs/Messages';
-import Stats from 'components/tabs/Stats';
-import Users from 'components/tabs/Users';
+// import Messages from 'components/tabs/Messages';
+// import Stats from 'components/tabs/Stats';
+// import Users from 'components/tabs/Users';
 
 import { ReactComponent as MessagesIcon } from 'assets/comments.svg';
 import { ReactComponent as StatsIcon } from 'assets/stats.svg';
 import { ReactComponent as UsersIcon } from 'assets/users.svg';
+
+const Messages = React.lazy(() => import('components/tabs/Messages'));
+const Stats = React.lazy(() => import('components/tabs/Stats'));
+const Users = React.lazy(() => import('components/tabs/Users'));
 
 const tabs = [
   { name: 'messages', icon: <MessagesIcon /> },
@@ -44,7 +48,7 @@ export default ({ sendMessage }) => {
           </button>
         ))}
       </div>
-      {tabContent[selectedTab]}
+      <Suspense fallback={<section />}>{tabContent[selectedTab]}</Suspense>
     </div>
   );
 };
