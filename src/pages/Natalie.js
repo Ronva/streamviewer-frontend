@@ -6,10 +6,7 @@ import Chat from 'components/Chat';
 
 import { useFetchVideos, useStream } from 'utils';
 
-const socket = new Socket(
-  `ws://${process.env.REACT_APP_SOCKET_ADDRESS}/socket`,
-  {}
-);
+const socket = new Socket(`${process.env.REACT_APP_SOCKET_ADDRESS}/socket`, {});
 
 export default () => {
   const { user, updateGlobalState } = useContext(Context);
