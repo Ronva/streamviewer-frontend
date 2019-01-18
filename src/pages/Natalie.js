@@ -26,8 +26,8 @@ export default () => {
 
     channel
       .join()
-      .receive('ok', res => console.log('Success', res))
-      .receive('error', () => {});
+      .receive('ok', () => console.log('Successfully connected to socket.'))
+      .receive('error', () => console.log('Error connecting to socket.'));
 
     channel.on('shout', ({ messages }) => {
       streamDispatch({

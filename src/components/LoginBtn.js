@@ -9,6 +9,7 @@ export default () => {
   const { updateGlobalState } = useContext(Context);
 
   const success = async user => {
+    console.log('logging in');
     const tokenIsValid = await verifyToken(user.accessToken);
     if (tokenIsValid) {
       updateGlobalState({ property: 'user', value: user });
