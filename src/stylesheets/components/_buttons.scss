@@ -4,8 +4,11 @@ button {
   background: $text-color;
   color: $bg;
   outline: none;
-  //box-shadow: 0 0 0 2px $text-color;
   border: none;
   border-radius: 3px;
+  transition: all .3s ease;
   cursor: pointer;
+  &.error {
+    background: $error-color;
+  }
 }

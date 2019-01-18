@@ -6,31 +6,27 @@ import Chat from 'components/Chat';
 import { postToApi, useStream } from 'utils';
 
 export default ({ streamId }) => {
-  const { token, updateGlobalState } = useContext(Context);
+  const { user, updateGlobalState } = useContext(Context);
+
   const stream = useStream(streamId);
   const { loading, error, videoInfo } = stream;
 
-  const sendMessage = async input => {
-    try {
-      const { activeLiveChatId } = videoInfo.liveStreamingDetails;
-      const data = {
-        snippet: {
-          liveChatId: activeLiveChatId,
-          type: 'textMessageEvent',
-          textMessageDetails: {
-            messageText: input
-          }
+  const sendMessage = input => {
+    const { activeLiveChatId } = videoInfo.liveStreamingDetails;
+    const data = {
+      snippet: {
+        liveChatId: activeLiveChatId,
+        type: 'textMessageEvent',
+        textMessageDetails: {
+          messageText: input
         }
-      };
-      const config = {
-        headers: { Authorization: `Bearer ${token}` }
-      };
+      }
+    };
+    const config = {
+      headers: { Authorization: `Bearer ${user.accessToken}` }
+    };
 
-      await postToApi('liveChat/messages?part=snippet', data, config);
-    } catch (e) {
-      console.log(e);
-      return e;
-    }
+    postToApi('liveChat/messages?part=snippet', data, config);
   };
 
   useEffect(
@@ -57,7 +53,7 @@ export default ({ streamId }) => {
             frameBorder="0"
             allowFullScreen
           />
-          <Chat sendMessage={sendMessage} />
+          <Chat />
         </>
       )}
     </main>

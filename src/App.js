@@ -9,7 +9,7 @@ export const Context = React.createContext({});
 
 export default () => {
   const [globalState, updateGlobalState] = useReducer(GenericReducer, {
-    token: null,
+    user: null,
     videoList: [],
     stream: initialStreamState
   });

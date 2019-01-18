@@ -43,7 +43,7 @@
       pointer-events: none;
     }
   }
-  .chatInput, .streamOffline {
+  .chatInputContainer, .streamOffline {
     grid-area: input;
   }
   .userSearch, .back {
@@ -72,16 +72,17 @@
   }
 }
 
-.chatInput {
+.chatInputContainer {
   display: flex;
-  input {
-    flex: 1;
-  }
-  button {
-    border-radius: 0;
-    background: color(brand, lightest);
-    color: $text-color;
-  }
+}
+
+.chatInput {
+  flex: 1;
+}
+.chatInputBtn {
+  border-radius: 0;
+  background: color(brand, lightest);
+  color: $text-color;
 }
 
 .streamOffline {

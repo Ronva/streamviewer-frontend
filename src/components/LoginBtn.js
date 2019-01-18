@@ -3,14 +3,16 @@ import { Context } from 'App';
 
 import { GoogleLogin } from 'react-google-login';
 
-import { onLoginFailure, onLoginSuccess } from 'utils';
+import { onLoginFailure, verifyToken } from 'utils';
 
 export default () => {
   const { updateGlobalState } = useContext(Context);
 
-  const success = async token => {
-    const accessToken = await onLoginSuccess(token);
-    updateGlobalState({ property: 'token', value: accessToken });
+  const success = async user => {
+    const tokenIsValid = await verifyToken(user.accessToken);
+    if (tokenIsValid) {
+      updateGlobalState({ property: 'user', value: user });
+    }
   };
 
   return (

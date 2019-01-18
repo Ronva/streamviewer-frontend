@@ -25,6 +25,8 @@ $bg: #1E202E !default;
 /// @type Color
 $text-color: #ffffff !default;
 
+$error-color: #D53B49;
+
 /// Palettes
 $palettes: (
     brand: palette($bg),

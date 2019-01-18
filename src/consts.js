@@ -6,8 +6,9 @@ export const initialStreamState = {
   isOffline: false,
   videoInfo: null,
   stats: {},
+  sendMessage: () => {},
   chat: {
-    items: []
+    messages: []
   }
 };
 
@@ -28,18 +29,13 @@ export const formatChatMessages = items =>
       return acc.concat({ id, displayName, messageText, publishedAt });
     }, []);
 
+export const natalie = {
+  videoId: 'natalie',
+  thumbnail: nataliethumbnail,
+  title: "Natalie's Stream"
+};
+
 export const mockVideos = [
-  {
-    id: { videoId: 'natalie' },
-    snippet: {
-      title: "Natalie's Stream",
-      thumbnails: {
-        medium: {
-          url: nataliethumbnail
-        }
-      }
-    }
-  },
   {
     kind: 'youtube#searchResult',
     etag: '"XI7nbFXulYBIpL0ayR_gDh3eu1k/Opah0Kz6lPMuNoc0d_Hg8nbBGug"',

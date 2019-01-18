@@ -3,8 +3,6 @@ import { Context } from 'App';
 
 import { format } from 'date-fns';
 
-import { formatChatMessages } from 'consts';
-
 const UserList = ({ users, setUser, search }) => {
   return [...new Set(users)]
     .filter(user => user.toLowerCase().includes(search.toLowerCase()))
@@ -33,7 +31,7 @@ export default React.memo(() => {
   const [users, setUsers] = useState([]);
 
   const { stream } = useContext(Context);
-  const messages = formatChatMessages(stream.chat.items);
+  const { messages } = stream.chat;
 
   useEffect(() => {
     const initialUserList = messages.map(({ displayName }) => displayName);

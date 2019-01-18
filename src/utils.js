@@ -3,7 +3,7 @@ import { Context } from 'App';
 import axios from 'axios';
 
 import { format } from 'date-fns';
-import { GenericReducer, initialStreamState } from 'consts';
+import { formatChatMessages, GenericReducer, initialStreamState } from 'consts';
 
 export const fetchFromApi = async (endpoint, params = {}) =>
   await axios.get(`https://www.googleapis.com/youtube/v3/${endpoint}`, {
@@ -17,28 +17,24 @@ export const postToApi = async (endpoint, data = {}, config = {}) =>
     config
   );
 
-export const onLoginSuccess = async ({ accessToken }) => {
+export const verifyToken = async accessToken => {
   const { data } = await axios.get(
     `https://www.googleapis.com/oauth2/v1/tokeninfo`,
     {
-      params: {
-        access_token: accessToken
-      }
+      params: { access_token: accessToken }
     }
   );
   const { audience, user_id, scope, expires_in } = data;
-
-  if (audience && user_id && scope && expires_in) {
-    return accessToken;
-  }
+  return audience && user_id && scope && expires_in;
 };
 
 export const onLoginFailure = res => console.log(res);
 
 export const normalizeVideos = videos =>
   videos.map(item => ({
+    ...item.snippet,
     videoId: item.id.videoId,
-    ...item.snippet
+    thumbnail: item.snippet.thumbnails.medium.url
   }));
 
 export const formatStats = stats => {
@@ -57,7 +53,7 @@ export const formatStats = stats => {
 };
 
 export const useFetchVideos = (query, maxResults, initial = []) => {
-  const { token } = useContext(Context);
+  const { user } = useContext(Context);
   const [videos, setVideos] = useState(initial);
 
   const fetchVideos = async () => {
@@ -78,9 +74,9 @@ export const useFetchVideos = (query, maxResults, initial = []) => {
 
   useEffect(
     () => {
-      token ? fetchVideos() : setVideos(initial);
+      user ? fetchVideos() : setVideos(initial);
     },
-    [token, query]
+    [user, query]
   );
 
   return videos;
@@ -127,11 +123,15 @@ export const useStream = (id, withChat = true) => {
           dispatch({ property: 'isOffline', value: true });
         } else {
           const { pollingIntervalMillis } = newChat;
+          const messages = formatChatMessages([
+            ...chat.messages,
+            ...newChat.items
+          ]);
           await dispatch({
             property: 'chat',
             value: {
               scrollInterval: pollingIntervalMillis / newChat.items.length,
-              items: [...chat.items, ...newChat.items]
+              messages
             }
           });
           chatTimeout = setTimeout(
@@ -144,7 +144,10 @@ export const useStream = (id, withChat = true) => {
       }
     } catch (e) {
       console.log(e);
-      dispatch({ property: 'error', value: 'Error fetching chat.' });
+      dispatch({
+        property: 'error',
+        value: <span className="notice">Error fetching chat</span>
+      });
     }
   };
 
@@ -173,5 +176,5 @@ export const useStream = (id, withChat = true) => {
     [videoInfo]
   );
 
-  return state;
+  return { ...state, streamDispatch: dispatch };
 };

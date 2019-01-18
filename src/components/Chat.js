@@ -1,9 +1,6 @@
 import React, { Suspense, useState, useEffect } from 'react';
 
 import classNames from 'classnames';
-// import Messages from 'components/tabs/Messages';
-// import Stats from 'components/tabs/Stats';
-// import Users from 'components/tabs/Users';
 
 import { ReactComponent as MessagesIcon } from 'assets/comments.svg';
 import { ReactComponent as StatsIcon } from 'assets/stats.svg';
@@ -19,7 +16,7 @@ const tabs = [
   { name: 'users', icon: <UsersIcon /> }
 ];
 
-export default ({ sendMessage }) => {
+export default () => {
   const defaultTab = tabs[0].name;
   const [selectedTab, setTab] = useState(defaultTab);
 
@@ -31,7 +28,7 @@ export default ({ sendMessage }) => {
   );
 
   const tabContent = {
-    messages: <Messages sendMessage={sendMessage} />,
+    messages: <Messages />,
     stats: <Stats />,
     users: <Users />
   };
