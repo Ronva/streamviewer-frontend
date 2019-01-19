@@ -1,4 +1,3 @@
-import { Socket } from 'phoenix';
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from 'App';
 
@@ -6,10 +5,8 @@ import Chat from 'components/Chat';
 
 import { useFetchVideos, useStream } from 'utils';
 
-const socket = new Socket(`${process.env.REACT_APP_SOCKET_ADDRESS}/socket`, {});
-
 export default () => {
-  const { user, updateGlobalState } = useContext(Context);
+  const { user, socket, updateGlobalState } = useContext(Context);
   const [channel, setChannel] = useState(null);
 
   const [video = {}] = useFetchVideos('gaming', 1);
@@ -18,15 +15,16 @@ export default () => {
   const { loading, error, chat, streamDispatch } = stream;
 
   useEffect(() => {
-    socket.connect();
-    let channel = socket.channel('natalie:lobby', {});
+    const newChannel = socket.channel('natalie:lobby', {});
 
-    channel
+    newChannel
       .join()
       .receive('ok', () => console.log('Successfully connected to socket.'))
-      .receive('error', () => console.log('Error connecting to socket.'));
+      .receive('error', res => {
+        console.log('Error connecting to socket.', res);
+      });
 
-    channel.on('shout', ({ messages }) => {
+    newChannel.on('shout', ({ messages }) => {
       streamDispatch({
         property: 'chat',
         value: {
@@ -35,11 +33,7 @@ export default () => {
       });
     });
 
-    setChannel(channel);
-
-    return () => {
-      socket.disconnect();
-    };
+    setChannel(newChannel);
   }, []);
 
   const sendMessage = messageText => {
@@ -68,7 +62,7 @@ export default () => {
         updateGlobalState({ property: 'stream', value: null });
       };
     },
-    [stream]
+    [!stream.videoInfo]
   );
 
   return (
