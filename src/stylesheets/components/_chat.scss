@@ -43,19 +43,19 @@
       pointer-events: none;
     }
   }
-  .chatInputContainer, .streamOffline {
+  .chatInputContainer, .streamOffline, .userSearch {
     grid-area: input;
   }
-  .userSearch, .back {
+  .userSort, .back {
     grid-area: top;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
   .tabs {
     grid-area: tabs;
     display: flex;
     flex-flow: column nowrap;
-  }
-  .streamOffline {
-    grid-area: input;
   }
 }
 
@@ -123,4 +123,27 @@
   background: color(brand, lightest);
   color: $text-color;
   border-radius: 0;
+}
+
+.userSort {
+  display: flex;
+  align-items: center;
+  background: color(brand, lightest);
+  overflow-x: auto;
+  label {
+    height: 100%;
+    padding: 8pt;
+    font-size: $h6;
+    svg {
+      display: block;
+      height: 1em;
+    }
+  }
+  .option {
+    margin-right: 8pt;
+    color: color(grey, lightest);
+    &.active {
+      color: $text-color;
+    }
+  }
 }

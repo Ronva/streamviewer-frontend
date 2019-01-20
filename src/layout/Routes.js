@@ -13,7 +13,7 @@ export default () => (
     <Home path="/" />
     <Login path="login" />
     <StreamWrapper path="stream">
-      <Stream path=":streamId" />
+      <Stream path=":videoId" />
       <Natalie path="natalie" />
     </StreamWrapper>
   </Router>

@@ -2,18 +2,19 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Context } from 'App';
 
 import { format } from 'date-fns';
+import classNames from 'classnames';
 
-const UserList = ({ users, setUser, search }) => {
-  return [...new Set(users)]
-    .filter(user => user.toLowerCase().includes(search.toLowerCase()))
-    .map(user => (
-      <button key={user} className="item" onClick={() => setUser(user)}>
-        <label>{user}</label>
-      </button>
-    ));
-};
+import { ReactComponent as Filter } from 'assets/filter.svg';
 
-const UserMessages = ({ selectedUser, messages }) => {
+const UserList = React.memo(({ sortedUsers, setUser }) => {
+  return sortedUsers.map(user => (
+    <button key={user} className="item" onClick={() => setUser(user)}>
+      <label>{user}</label>
+    </button>
+  ));
+});
+
+const UserMessages = React.memo(({ selectedUser, messages }) => {
   return messages
     .filter(({ displayName }) => displayName === selectedUser)
     .map(({ id, messageText, publishedAt }) => (
@@ -22,30 +23,66 @@ const UserMessages = ({ selectedUser, messages }) => {
         {messageText}
       </div>
     ));
-};
+});
 
-export default React.memo(() => {
+export default () => {
   const [title, setTitle] = useState('Users');
   const [selectedUser, setUser] = useState(null);
   const [search, setSearch] = useState('');
+  const [sort, setSort] = useState('activity');
   const [users, setUsers] = useState([]);
+  const [sortedUsers, setSorted] = useState([]);
 
   const { stream } = useContext(Context);
   const { messages } = stream.chat;
 
-  useEffect(() => {
-    const initialUserList = messages.map(({ displayName }) => displayName);
-    setUsers(initialUserList);
-  }, []);
+  useEffect(
+    () => {
+      const newUsers = messages.reduce((acc, message) => {
+        const { displayName: dn, id } = message;
+        if (!users[dn]) {
+          acc[dn] = {
+            ids: !acc[dn] ? [id] : [...acc[dn].ids, id],
+            index: Object.keys(users).length + Object.keys(acc).length
+          };
+        } else {
+          const { ids, index } = users[dn];
+          acc[dn] = {
+            ids: [...ids, id],
+            index
+          };
+        }
+        return acc;
+      }, {});
+      setUsers(newUsers);
+    },
+    [messages]
+  );
 
   useEffect(
     () => {
-      const newUsers = messages
-        .filter(({ displayName }) => !users.includes(displayName))
-        .map(({ displayName }) => displayName);
-      setUsers(oldList => [...oldList, ...newUsers]);
+      const newList = Object.keys(users);
+      let sorted;
+      switch (sort) {
+        case 'alphabetic':
+          sorted = newList.sort((a, b) => (a > b ? 1 : -1));
+          break;
+        case '# of messages':
+          sorted = newList.sort(
+            (a, b) => users[b].ids.length - users[a].ids.length
+          );
+          break;
+        default:
+          sorted = newList.sort((a, b) => users[a].index - users[b].index);
+          break;
+      }
+
+      sorted = sorted.filter(user =>
+        user.toLowerCase().includes(search.toLowerCase())
+      );
+      setSorted(sorted);
     },
-    [messages]
+    [users, sort, search]
   );
 
   useEffect(
@@ -69,8 +106,23 @@ export default React.memo(() => {
       onChange={e => setSearch(e.target.value)}
     />
   );
+  const userSort = (
+    <div className="userSort">
+      <label>
+        <Filter />
+      </label>
+      {['activity', 'alphabetic', '# of messages'].map(option => (
+        <button
+          key={option}
+          className={classNames('option', 'plain', { active: option === sort })}
+          onClick={() => setSort(option === sort ? 'activity' : option)}>
+          {option}
+        </button>
+      ))}
+    </div>
+  );
 
-  const listProps = { setUser, users, search };
+  const listProps = { setUser, sortedUsers };
   const messagesProps = { selectedUser, messages };
 
   const userList = <UserList {...listProps} />;
@@ -79,10 +131,11 @@ export default React.memo(() => {
   return (
     <>
       <h3 className="title">{title}</h3>
-      {selectedUser ? back : userSearch}
+      {!selectedUser && userSort}
       <section className="users">
         {selectedUser ? userMessages : userList}
       </section>
+      {selectedUser ? back : userSearch}
     </>
   );
-});
+};

@@ -4,7 +4,7 @@ import { Context } from 'App';
 import Message from 'components/Message';
 import ChatInput from 'components/ChatInput';
 
-export default React.memo(() => {
+export default () => {
   const { stream } = useContext(Context);
   const { messages, scrollInterval } = stream.chat;
 
@@ -47,4 +47,4 @@ export default React.memo(() => {
       {stream.isOffline ? offline : input}
     </>
   );
-});
+};

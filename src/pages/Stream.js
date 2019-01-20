@@ -1,15 +1,16 @@
 import React, { useContext, useEffect } from 'react';
 import { Context } from 'App';
 
+import Video from 'components/Video';
 import Chat from 'components/Chat';
 
 import { postToApi, useStream } from 'utils';
 
-export default ({ streamId }) => {
-  const { user, updateGlobalState } = useContext(Context);
+export default ({ videoId }) => {
+  const { user } = useContext(Context);
 
-  const stream = useStream(streamId);
-  const { loading, error, videoInfo } = stream;
+  const stream = useStream(videoId);
+  const { loading, error, videoInfo, streamDispatch } = stream;
 
   const sendMessage = input => {
     const { activeLiveChatId } = videoInfo.liveStreamingDetails;
@@ -29,30 +30,18 @@ export default ({ streamId }) => {
     postToApi('liveChat/messages?part=snippet', data, config);
   };
 
-  useEffect(
-    () => {
-      updateGlobalState({
-        property: 'stream',
-        value: { ...stream, sendMessage }
-      });
-      return () => {
-        updateGlobalState({ property: 'stream', value: null });
-      };
-    },
-    [stream]
-  );
+  useEffect(() => {
+    streamDispatch({
+      property: 'sendMessage',
+      value: sendMessage
+    });
+  }, []);
 
   return (
     <main role="main" className="stream">
       {error || (loading && 'Loading...') || (
         <>
-          <iframe
-            className="video"
-            title="title"
-            src={`https://www.youtube.com/embed/${streamId}?enablejsapi=1&autoplay=1`}
-            frameBorder="0"
-            allowFullScreen
-          />
+          <Video videoId={videoId} />
           <Chat />
         </>
       )}

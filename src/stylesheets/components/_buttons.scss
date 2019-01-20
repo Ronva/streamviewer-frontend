@@ -8,6 +8,13 @@ button {
   border-radius: 3px;
   transition: all .3s ease;
   cursor: pointer;
+  &.plain {
+    background: transparent;
+    padding: 0;
+    color: $text-color;
+    line-height: 1;
+    border-radius: 0;
+  }
   &.error {
     background: $error-color;
   }

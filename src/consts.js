@@ -8,6 +8,7 @@ export const initialStreamState = {
   stats: {},
   sendMessage: () => {},
   chat: {
+    scrollInterval: 0,
     messages: []
   }
 };

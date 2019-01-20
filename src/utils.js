@@ -83,6 +83,7 @@ export const useFetchVideos = (query, maxResults, initial = []) => {
 };
 
 export const useStream = (id, withChat = true) => {
+  const { updateGlobalState } = useContext(Context);
   const [state, dispatch] = useReducer(GenericReducer, initialStreamState);
   const { error, videoInfo, isOffline, chat } = state;
 
@@ -174,6 +175,16 @@ export const useStream = (id, withChat = true) => {
       };
     },
     [videoInfo]
+  );
+
+  useEffect(
+    () => {
+      updateGlobalState({
+        property: 'stream',
+        value: state
+      });
+    },
+    [state]
   );
 
   return { ...state, streamDispatch: dispatch };
