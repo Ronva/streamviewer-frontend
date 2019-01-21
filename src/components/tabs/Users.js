@@ -60,7 +60,7 @@ export default () => {
     const newList = Object.keys(users);
     let sorted;
     switch (sort) {
-      case 'alphabetic':
+      case 'alphabetical':
         sorted = newList.sort((a, b) => (a > b ? 1 : -1));
         break;
       case '# of messages':
@@ -102,7 +102,7 @@ export default () => {
       <label>
         <Filter />
       </label>
-      {['activity', 'alphabetic', '# of messages'].map(option => (
+      {['activity', 'alphabetical', '# of messages'].map(option => (
         <button
           key={option}
           className={classNames('option', 'plain', { active: option === sort })}
