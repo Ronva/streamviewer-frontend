@@ -72,12 +72,9 @@ export const useFetchVideos = (query, maxResults, initial = []) => {
     setVideos(videos);
   };
 
-  useEffect(
-    () => {
-      user ? fetchVideos() : setVideos(initial);
-    },
-    [user, query]
-  );
+  useEffect(() => {
+    user ? fetchVideos() : setVideos(initial);
+  }, [user, query]);
 
   return videos;
 };
@@ -152,40 +149,31 @@ export const useStream = (id, withChat = true) => {
     }
   };
 
-  useEffect(
-    () => {
-      id && fetchVideoInfo();
-    },
-    [id]
-  );
+  useEffect(() => {
+    id && fetchVideoInfo();
+  }, [id]);
 
-  useEffect(
-    () => {
-      if (videoInfo) {
-        dispatch({
-          property: 'stats',
-          value: formatStats(videoInfo)
-        });
-      }
-      if (fetchChatReady) fetchChat();
-      dispatch({ property: 'loading', value: false });
-
-      return () => {
-        clearTimeout(chatTimeout);
-      };
-    },
-    [videoInfo]
-  );
-
-  useEffect(
-    () => {
-      updateGlobalState({
-        property: 'stream',
-        value: state
+  useEffect(() => {
+    if (videoInfo) {
+      dispatch({
+        property: 'stats',
+        value: formatStats(videoInfo)
       });
-    },
-    [state]
-  );
+    }
+    if (fetchChatReady) fetchChat();
+    dispatch({ property: 'loading', value: false });
+
+    return () => {
+      clearTimeout(chatTimeout);
+    };
+  }, [videoInfo]);
+
+  useEffect(() => {
+    updateGlobalState({
+      property: 'stream',
+      value: state
+    });
+  }, [state]);
 
   return { ...state, streamDispatch: dispatch };
 };

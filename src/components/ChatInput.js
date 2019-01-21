@@ -27,12 +27,9 @@ export default () => {
     }
   };
 
-  useEffect(
-    () => {
-      inputRef.current && inputRef.current.focus();
-    },
-    [inputRef]
-  );
+  useEffect(() => {
+    inputRef.current && inputRef.current.focus();
+  }, [inputRef]);
 
   return (
     <Authorized>

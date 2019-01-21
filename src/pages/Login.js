@@ -6,12 +6,9 @@ import LoginBtn from 'components/LoginBtn';
 
 export default () => {
   const { user } = useContext(Context);
-  useEffect(
-    () => {
-      user && navigate('/');
-    },
-    [user]
-  );
+  useEffect(() => {
+    user && navigate('/');
+  }, [user]);
 
   return (
     <main role="main" className="login">

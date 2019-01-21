@@ -11,12 +11,9 @@ export default () => {
   const { user } = useContext(Context);
   const videos = useFetchVideos('gaming', 19);
 
-  useEffect(
-    () => {
-      !user && navigate('/login');
-    },
-    [user]
-  );
+  useEffect(() => {
+    !user && navigate('/login');
+  }, [user]);
 
   return (
     <Authorized>

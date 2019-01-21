@@ -7,56 +7,24 @@ import Chat from 'components/Chat';
 
 import { useFetchVideos, useStream } from 'utils';
 
-let socket = new Socket(`${process.env.REACT_APP_SOCKET_ADDRESS}/socket`, {});
-socket.connect();
-let channel = socket.channel('natalie:lobby');
-
 export default () => {
   const { user } = useContext(Context);
-  const [messages, setMessages] = useState(null);
+  const [initialized, setInit] = useState(false);
+  const [channel, setChannel] = useState(null);
+  const [messages, setMessages] = useState([]);
 
   const [video = {}] = useFetchVideos('gaming', 1);
   const { videoId = null } = video;
   const stream = useStream(videoId, false);
   const { loading, error, streamDispatch } = stream;
 
-  useEffect(() => {
-    channel
-      .join()
-      .receive('ok', () => console.log('Successfully connected to socket.'))
-      .receive('error', res => {
-        console.log('Error connecting to socket.', res);
-      });
+  const handleInit = ({ messages: initialMessages }) => {
+    setMessages(initialMessages);
+  };
 
-    channel.on('shout', ({ message }) => {
-      setMessages(prevMessages => [...prevMessages, message]);
-    });
-
-    channel.on('initialize', ({ messages: initialMessages }) => {
-      setMessages(initialMessages);
-    });
-  }, []);
-
-  useEffect(
-    () => {
-      if (channel && !messages) {
-        channel.push('shout', { init: true });
-      }
-    },
-    [channel]
-  );
-
-  useEffect(
-    () => {
-      if (messages) {
-        streamDispatch({
-          property: 'chat',
-          value: { messages }
-        });
-      }
-    },
-    [messages]
-  );
+  const handleShout = ({ message }) => {
+    setMessages(prevMessages => [...prevMessages, message]);
+  };
 
   const sendMessage = messageText => {
     const { accessToken, googleId, profileObj } = user;
@@ -68,14 +36,40 @@ export default () => {
     });
   };
 
-  useEffect(
-    () => {
-      if (user) {
-        streamDispatch({ property: 'sendMessage', value: sendMessage });
-      }
-    },
-    [user]
-  );
+  useEffect(() => {
+    let socket = new Socket(
+      `${process.env.REACT_APP_SOCKET_ADDRESS}/socket`,
+      {}
+    );
+    socket.connect();
+
+    let newChannel = socket.channel('natalie:lobby');
+
+    newChannel.on('initialize', handleInit);
+    newChannel.on('shout', handleShout);
+
+    newChannel
+      .join()
+      .receive('ok', () => setInit(true))
+      .receive('error', res => {
+        console.log('Error connecting to socket.', res);
+      });
+
+    setChannel(newChannel);
+  }, []);
+
+  useEffect(() => {
+    if (channel && initialized) {
+      streamDispatch({ property: 'sendMessage', value: sendMessage });
+    }
+  }, [channel, initialized]);
+
+  useEffect(() => {
+    streamDispatch({
+      property: 'chat',
+      value: { messages }
+    });
+  }, [messages]);
 
   return (
     <main role="main" className="stream">

@@ -31,11 +31,10 @@ export default ({ videoId }) => {
   };
 
   useEffect(() => {
-    streamDispatch({
-      property: 'sendMessage',
-      value: sendMessage
-    });
-  }, []);
+    if (videoInfo && stream.sendMessage !== sendMessage) {
+      streamDispatch({ property: 'sendMessage', value: sendMessage });
+    }
+  }, [videoInfo]);
 
   return (
     <main role="main" className="stream">

@@ -24,13 +24,10 @@ export default () => {
     };
   }, []);
 
-  useEffect(
-    () => {
-      const { current } = chatRef;
-      current.scrollTop = current.scrollHeight;
-    },
-    [messages.length !== 0]
-  );
+  useEffect(() => {
+    const { current } = chatRef;
+    current.scrollTop = current.scrollHeight;
+  }, [messages.length !== 0]);
 
   return (
     <>

@@ -36,61 +36,52 @@ export default () => {
   const { stream } = useContext(Context);
   const { messages } = stream.chat;
 
-  useEffect(
-    () => {
-      const newUsers = messages.reduce((acc, message) => {
-        const { displayName: dn, id } = message;
-        if (!users[dn]) {
-          acc[dn] = {
-            ids: !acc[dn] ? [id] : [...acc[dn].ids, id],
-            index: Object.keys(users).length + Object.keys(acc).length
-          };
-        } else {
-          const { ids, index } = users[dn];
-          acc[dn] = {
-            ids: [...ids, id],
-            index
-          };
-        }
-        return acc;
-      }, {});
-      setUsers(newUsers);
-    },
-    [messages]
-  );
-
-  useEffect(
-    () => {
-      const newList = Object.keys(users);
-      let sorted;
-      switch (sort) {
-        case 'alphabetic':
-          sorted = newList.sort((a, b) => (a > b ? 1 : -1));
-          break;
-        case '# of messages':
-          sorted = newList.sort(
-            (a, b) => users[b].ids.length - users[a].ids.length
-          );
-          break;
-        default:
-          sorted = newList.sort((a, b) => users[a].index - users[b].index);
-          break;
+  useEffect(() => {
+    const newUsers = messages.reduce((acc, message) => {
+      const { displayName: dn, id } = message;
+      if (!users[dn]) {
+        acc[dn] = {
+          ids: !acc[dn] ? [id] : [...acc[dn].ids, id],
+          index: Object.keys(users).length + Object.keys(acc).length
+        };
+      } else {
+        const { ids, index } = users[dn];
+        acc[dn] = {
+          ids: [...ids, id],
+          index
+        };
       }
+      return acc;
+    }, {});
+    setUsers(newUsers);
+  }, [messages]);
 
-      sorted = sorted.filter(user =>
-        user.toLowerCase().includes(search.toLowerCase())
-      );
-      setSorted(sorted);
-    },
-    [users, sort, search]
-  );
+  useEffect(() => {
+    const newList = Object.keys(users);
+    let sorted;
+    switch (sort) {
+      case 'alphabetic':
+        sorted = newList.sort((a, b) => (a > b ? 1 : -1));
+        break;
+      case '# of messages':
+        sorted = newList.sort(
+          (a, b) => users[b].ids.length - users[a].ids.length
+        );
+        break;
+      default:
+        sorted = newList.sort((a, b) => users[a].index - users[b].index);
+        break;
+    }
 
-  useEffect(
-    () => {
-      setTitle(selectedUser || 'Users');
-    },
-    [selectedUser]
-  );
+    sorted = sorted.filter(user =>
+      user.toLowerCase().includes(search.toLowerCase())
+    );
+    setSorted(sorted);
+  }, [users, sort, search]);
+
+  useEffect(() => {
+    setTitle(selectedUser || 'Users');
+  }, [selectedUser]);
 
   const back = (
     <button className="back" onClick={() => setUser(null)}>

@@ -1,16 +1,19 @@
 import React, { useContext } from 'react';
 import { Context } from 'App';
+import { useSessionStorageState } from 'react-storage-hooks';
 
 import { GoogleLogin } from 'react-google-login';
 
 import { onLoginFailure, verifyToken } from 'utils';
 
 export default () => {
+  const [, setLocalUser] = useSessionStorageState('user', null);
   const { updateGlobalState } = useContext(Context);
 
   const success = async user => {
     const tokenIsValid = await verifyToken(user.accessToken);
     if (tokenIsValid) {
+      setLocalUser(user);
       updateGlobalState({ property: 'user', value: user });
     }
   };
