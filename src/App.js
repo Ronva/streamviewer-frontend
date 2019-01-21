@@ -20,7 +20,7 @@ export default () => {
   useEffect(() => {
     updateGlobalState({
       property: 'user',
-      value: verifyToken(localUser.accessToken) ? localUser : null
+      value: localUser && verifyToken(localUser.accessToken) ? localUser : null
     });
   }, []);
 

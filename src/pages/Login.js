@@ -12,8 +12,10 @@ export default () => {
 
   return (
     <main role="main" className="login">
-      <h1>StreamViewer</h1>
-      <LoginBtn />
+      <section className="display">
+        <h1>StreamViewer</h1>
+        <LoginBtn />
+      </section>
     </main>
   );
 };

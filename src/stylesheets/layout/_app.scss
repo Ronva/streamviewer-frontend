@@ -26,6 +26,7 @@ main {
 .thumbnail {
   position: relative;
   background: grey;
+  box-shadow: 0 2px 1px rgba(black, 0.25);
   .overlay {
     opacity: 0;
     position: absolute;
