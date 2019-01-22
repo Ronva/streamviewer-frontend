@@ -1,5 +1,4 @@
-# StreamViewer Frontend 
-Streamlabs Coding Assignment
+# StreamViewer Frontend
 
 StreamViewer is built using React with the new [hooks API](https://reactjs.org/docs/hooks-reference.html). Routing is managed by [Reach Router](https://reach.tech/router). All YouTube API logic is handled on the frontend using Google oAuth 2. Upon login and every time the user chats the Google access token is verified to make sure it is always valid. 
 
